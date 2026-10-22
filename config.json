@@ -1,0 +1,13 @@
+{
+  "backend_url": "http://127.0.0.1:8011",
+  "model": "qwen2.5-1.5b-instruct-q4_k_m",
+  "llama_server_port": 8011,
+  "llama_context": 2048,
+  "llama_threads": 4,
+  "max_tokens": 512,
+  "temperature": 0.4,
+  "timeout_seconds": 600,
+  "review_default": false,
+  "memory_chars_per_task": 1800,
+  "roster": ["cannabis-ops", "research", "marketing", "review"]
+}

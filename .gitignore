@@ -1,0 +1,8 @@
+# The 1GB model file is downloaded on the phone, never stored in git.
+models/
+
+# Runtime noise stays off the repo; drafts and logs are personal.
+data/inbox/
+data/llama-server.log
+__pycache__/
+*.pyc

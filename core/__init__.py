@@ -1,0 +1,1 @@
+# core package for mini-alexandria — all the small programs live here.
