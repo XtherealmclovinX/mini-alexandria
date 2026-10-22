@@ -25,7 +25,7 @@ Storage permission: not needed for this install.
 
 ## Commands in order (type each by hand)
 
-**Step 1 — get the repo** (repo is private — see Troubleshooting before this):
+**Step 1 — get the repo** (repo is public — plain clone works):
 
     git clone https://github.com/XtherealmclovinX/mini-alexandria ~/mini-alexandria
 
@@ -63,9 +63,8 @@ Full undo = `rm -rf` those three folders (brother's choice, run manually).
 
 ## Troubleshooting
 
-- **git clone fails** — the repo is not created yet, or private and SSH
-  keys are not set up in Termux. Fix: make the clone URL right, or use
-  the HTTPS URL.
+- **git clone fails** — wrong URL, or the repo was made private again. Fix:
+  check the URL, or re-publicize the repo in GitHub Settings.
 - **build fails at cmake** — run `pkg install -y cmake ninja clang`, then
   re-run the build script.
 - **build killed mid-way (Killed)** — RAM pressure: close ALL apps, turn
