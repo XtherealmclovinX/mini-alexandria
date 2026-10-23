@@ -1,0 +1,10 @@
+{
+  "signal": {
+    "enabled": true,
+    "account": "+1XXXXXXXXXX",
+    "allowed": ["+1BROTHERNUMBER", "+1ALEXNUMBER"],
+    "proot_distro": "debian",
+    "daemon_http_port": 8080,
+    "poll_seconds": 3
+  }
+}

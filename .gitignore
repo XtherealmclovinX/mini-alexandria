@@ -1,3 +1,6 @@
+# Personal values (his + allowed numbers, bot's own number) stay off GitHub.
+config.local.json
+
 # The 1GB model file is downloaded on the phone, never stored in git.
 models/
 
