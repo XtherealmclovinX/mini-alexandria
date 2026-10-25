@@ -9,6 +9,11 @@ PORT=$(python3 -c 'import json;print(json.load(open("config.json"))["llama_serve
 THREADS=$(python3 -c 'import json;print(json.load(open("config.json"))["llama_threads"])')
 CONTEXT=$(python3 -c 'import json;print(json.load(open("config.json"))["llama_context"])')
 MODEL=$(python3 -c 'import json;print(json.load(open("config.json"))["model"])')
+SIGNAL_ENABLED=$(python3 -c 'import json
+c = json.load(open("config.json"))
+try: c.update(json.load(open("config.local.json")))
+except Exception: pass
+print("true" if c.get("signal", {}).get("enabled") else "false")')
 MODEL_PATH="models/$MODEL.gguf"
 
 if [ ! -f "$MODEL_PATH" ]; then
@@ -33,7 +38,15 @@ echo "loading model ($MODEL) — a 1.5B model may take 10-60s from cold storage"
 i=0
 while [ $i -lt 30 ]; do
     if curl -s --max-time 2 "http://127.0.0.1:$PORT/health" 2>/dev/null | grep -q "ok"; then
-        echo "ready. talk to your team:  python3 main.py chat"
+        if [ "$SIGNAL_ENABLED" = "true" ]; then
+    pkill -f "core/signal_bridge.py" 2>/dev/null || true
+    pkill -f "signal-cli" 2>/dev/null || true
+    sleep 1
+    nohup python3 core/signal_bridge.py > data/signal-bridge.log 2>&1 &
+    echo "signal bridge starting too (log: data/signal-bridge.log)"
+fi
+
+echo "ready. talk to your team:  python3 main.py chat"
         exit 0
     fi
     sleep 2

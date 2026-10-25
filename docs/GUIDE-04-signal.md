@@ -109,7 +109,8 @@ shows `[signal] task from ...` lines for every attempt.
     sh ~/mini-alexandria/stop.sh      — stops both (do this when idle: phone
                                         stays cool, battery survives)
 
-Only allowed numbers get answers; anyone else texts into silence.
+Only allowed numbers get answers; anyone else's texts are logged as
+DENIED in `data/signal-bridge.log` (nothing goes to the agents).
 
 ## If something breaks
 
@@ -119,6 +120,7 @@ Only allowed numbers get answers; anyone else texts into silence.
 | `INSTALL OK` missing / NOT FOUND in Part 1 | Send back the full output of the install command |
 | Verify code rejected | Number got no SMS: re-run register with `--voice` at the end for a call |
 | Bot silent but selftest passes | Check `data/signal-bridge.log` — `[signal] task from` lines only appear for ALLOWED numbers |
+| Answers one person, silence for another | Update first (`git pull`). Text the bot from the ignored person's account, then `tail -5 data/signal-bridge.log` — a `[signal] message DENIED from` line names the EXACT identifier that account presents (phone number or UUID from Signal's privacy settings). Put THAT identifier in `config.local.json` (a UUID is accepted now), then `sh stop.sh && sh start.sh` and text again |
 | Phone crawls during Signal runs | Close apps; also `nano config.json`, set `llama_context` 2048 → 1024 (frees ~150MB), restart |
 | `NOT READY` / memory kill | The RAM rule again: close apps, stop, start |
 | Wrong answers only under Signal | Send `data/signal-bridge.log` back — the fix ships as an update |

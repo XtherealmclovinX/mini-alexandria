@@ -67,6 +67,25 @@ def wait_http(base_url, tries=40):
     return False
 
 
+def normalize_id(value):
+    """Lowercase and drop separators so '+1 555 123-4567',
+    '+15551234567', and dash-carrying UUIDs compare equal."""
+    text = (value or "").strip().lower()
+    return text.replace("-", "").replace(" ", "").replace(".", "")
+
+
+def identifiers(envelope):
+    """Every identifier signal-cli may present a sender as. Newer signal-cli
+    versions (and username-registered accounts) show UUIDs where older ones
+    showed phone numbers — matching on all of them is the point."""
+    found = set()
+    for key in ("sourceNumber", "source", "sourceUuid"):
+        value = envelope.get(key)
+        if isinstance(value, str) and value.strip():
+            found.add(normalize_id(value))
+    return found
+
+
 def extract_tasks(entry, allowed):
     """Best-effort parse of one receive result — shapes vary by version."""
     out = []
@@ -75,11 +94,20 @@ def extract_tasks(entry, allowed):
         envelope = item.get("envelope", item) if isinstance(item, dict) else {}
         if not isinstance(envelope, dict):
             continue
-        sender = envelope.get("sourceNumber") or envelope.get("source") or ""
+        sender = (envelope.get("sourceNumber") or envelope.get("source")
+                  or envelope.get("sourceUuid") or "unknown")
         data = envelope.get("dataMessage") or {}
         text = (data.get("message") or "").strip() if isinstance(data, dict) else ""
-        if sender in allowed and text:
+        if not text:
+            continue
+        if identifiers(envelope) & allowed:
             out.append((sender, text))
+        else:
+            # Keep this log line: it is THE diagnostic for "bot replies to
+            # one person but not another" — it names the identifier the
+            # sender's Signal account actually presents.
+            print("[signal] message DENIED from %s (identifiers: %s) "
+                  "— not in allowed list" % (sender, sorted(identifiers(envelope))))
     return out
 
 
@@ -96,7 +124,7 @@ def main():
     if not signal.get("enabled"):
         sys.exit("[bridge] signal.enabled is false — nothing to do")
     account = signal.get("account")
-    allowed = set(signal.get("allowed", []))
+    allowed = set(normalize_id(value) for value in signal.get("allowed", []))
     distroname = signal.get("proot_distro", "debian")
     port = int(signal.get("daemon_http_port", 8080))
     base_url = "http://127.0.0.1:%d" % port
