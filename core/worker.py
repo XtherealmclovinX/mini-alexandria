@@ -5,17 +5,18 @@
 import os
 import time
 
-from . import llm, memory, router
+from . import llm, memory, router, runs
 
 BASE = os.path.dirname(os.path.dirname(__file__))
 INBOX = os.path.join(BASE, "data", "inbox")
 
 
-def run_task(llm_client, task, config, do_review=False):
+def run_task(llm_client, task, config, do_review=False, source="cli"):
     """The full pipeline for one task: route -> draft -> (review -> revise).
 
     Returns the final text of the answer.
     """
+    started = time.time()
     stamp = time.strftime("%Y-%m-%d_%H%M%S")
     recent = memory.recall(config["memory_chars_per_task"])
 
@@ -58,4 +59,5 @@ def run_task(llm_client, task, config, do_review=False):
     print("[saved] " + path)
 
     memory.remember(role, task, answer[:400])
+    runs.record(source, role, time.time() - started, do_review)
     return answer

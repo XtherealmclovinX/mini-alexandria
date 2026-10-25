@@ -132,6 +132,14 @@ customization model.
 
     python3 ~/mini-alexandria/main.py route "your question"   (watch chief pick)
     python3 ~/mini-alexandria/main.py ask "..." --review     (draft + critique + fix)
+    python3 ~/mini-alexandria/main.py stats                  (what the team has done)
+
+Own the board (same verbs as the big system):
+
+    python3 ~/mini-alexandria/core/kanban.py add "plan spring grow"
+    python3 ~/mini-alexandria/core/kanban.py complete 2
+    python3 ~/mini-alexandria/core/kanban.py block 2 needs_input "waiting on cost"
+    python3 ~/mini-alexandria/core/kanban.py show 2
 
 ---
 

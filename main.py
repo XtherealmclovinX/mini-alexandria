@@ -16,7 +16,7 @@ import sys
 BASE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, BASE)
 
-from core import llm, memory, router, worker
+from core import llm, memory, router, runs, worker
 
 
 def load_config():
@@ -66,13 +66,15 @@ def main():
     config = load_config()
     client = make_client(config)
     parser = argparse.ArgumentParser(description="mini-alexandria")
-    parser.add_argument("command", choices=["ask", "chat", "route"])
+    parser.add_argument("command", choices=["ask", "chat", "route", "stats"])
     parser.add_argument("question", nargs="?", default="")
     parser.add_argument("--review", action="store_true")
     args = parser.parse_args()
 
     if args.command == "chat":
         chat_loop(client, config)
+    elif args.command == "stats":
+        runs.stats()
     elif args.command == "route":
         if not args.question:
             sys.exit("usage: python3 main.py route \"your question\"")

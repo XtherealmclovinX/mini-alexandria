@@ -155,7 +155,8 @@ def main():
                     try:
                         reply = worker.run_task(
                             worker.llm.LLM(config["backend_url"], config["model"]),
-                            text, config, do_review=False)
+                            text, config, do_review=config.get("signal_review", False),
+                            source="signal")
                     except Exception as error:
                         reply = "agents had a problem: %s" % error
                     print("[signal] replying to %s" % sender)

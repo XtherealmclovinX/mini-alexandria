@@ -8,6 +8,7 @@
   "temperature": 0.4,
   "timeout_seconds": 600,
   "review_default": false,
+  "signal_review": false,
   "memory_chars_per_task": 1800,
   "roster": ["cannabis-ops", "research", "marketing", "review"]
 }
